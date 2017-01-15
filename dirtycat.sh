@@ -23,7 +23,7 @@ if [ "$category" == 'HEALTH' ] || [ "$category" == 'health' ] || [ "$category" =
 	mv /var/www/html/$site/web/* /var/www/html/$site/
 fi
 
-done < hosts.txt
+done < $1
 
 
 service apache2 restart
