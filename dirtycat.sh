@@ -4,8 +4,8 @@ sudo apt-get install zip unzip curl screen tmux apache2 php libapache2-mod-php p
 
 # Generate vhosts
 while read p; do
-site=$(echo $p | cut -f1 -d;)
-category=$(echo $p | cut -f2 -d;)
+site=$(echo $p | cut -f1 -d\;)
+category=$(echo $p | cut -f2 -d\;)
 
 mkdir -p /var/www/html/$site
 
