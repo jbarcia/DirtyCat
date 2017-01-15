@@ -17,10 +17,11 @@ sed -ie "s/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/$site/g"
 
 a2ensite $site
 
-if $category == ""
-	$(( ( RANDOM % 43 )  + 1 ))
-	unzip ~/dental_clinic-web.zip -d /var/www/html/$site/
+if [ "$category" == 'HEALTH' ] || [ "$category" == 'health' ] || [ "$category" == 'Health' ]; then
+	rand=$(( ( RANDOM % 43 )  + 1 ))
+	unzip Templates/HEALTH/$rand*.zip -d /var/www/html/$site/
 	mv /var/www/html/$site/web/* /var/www/html/$site/
+fi
 
 done < hosts.txt
 
