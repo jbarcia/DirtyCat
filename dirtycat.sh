@@ -24,7 +24,7 @@ fi
 option=$1
 filename=$2
 
-apt-get -q -y install zip unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt
+apt-get -q -y install zip unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt php7.0 libapache2-mod-php7.0
 
 while read p; do
 	site=$(echo $p | cut -f1 -d\;)
@@ -54,7 +54,7 @@ while read p; do
 			mv /var/www/html/$site/web/* /var/www/html/$site/
 		fi
 
-		if [ "$category" == 'FINANCE' ] || [ "$category" == 'finance' ] || [ "$category" == 'Finance' ]; then
+		if [ "$category" == 'FINANCIAL' ] || [ "$category" == 'financial' ] || [ "$category" == 'Financial' ]; then
 			rand=$(( ( RANDOM % 32 )  + 1 ))
 			unzip Templates/FINANCE/$rand*.zip -d /var/www/html/$site/
 			mv /var/www/html/$site/web/* /var/www/html/$site/
@@ -68,13 +68,13 @@ while read p; do
 
 		if [ "$category" == 'TECH' ] || [ "$category" == 'tech' ] || [ "$category" == 'Tech' ]; then
 			rand=$(( ( RANDOM % 16 )  + 1 ))
-			unzip Templates/CHARITY/$rand*.zip -d /var/www/html/$site/
+			unzip Templates/TECH/$rand*.zip -d /var/www/html/$site/
 			mv /var/www/html/$site/web/* /var/www/html/$site/
 		fi
 
 		if [ "$category" == 'CAREER' ] || [ "$category" == 'career' ] || [ "$category" == 'Career' ]; then
 			rand=$(( ( RANDOM % 16 )  + 1 ))
-			unzip Templates/CHARITY/$rand*.zip -d /var/www/html/$site/
+			unzip Templates/CAREERS/$rand*.zip -d /var/www/html/$site/
 			mv /var/www/html/$site/web/* /var/www/html/$site/
 		fi
 	fi
