@@ -21,8 +21,8 @@ then
         exit
 fi
 
-option = $1
-filename = $2
+option=$1
+filename=$2
 
 apt-get -q -y install zip unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt
 
