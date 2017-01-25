@@ -7,7 +7,7 @@ then
 fi
 
 chmod +x /home/user/slit.sh
-apt-get -y -q install uml-utilities screen
+sudo apt-get -y -q install uml-utilities screen
 # Slit Setup
 sudo sh "echo 1 tunnel >> /etc/iproute2/rt_table"
 sudo -u root ssh-keygen
