@@ -3,14 +3,26 @@
 dir=$(pwd)
 
 # Check 2 arguments are given #
-if [[ $# -lt 2 ]] || [[ $1 == --help ]] || [[ $1 != -*[vsc]* ]]; then
+if [[ $# -lt 2 ]] || [[ $1 == --help ]] || [[ $1 != -*[vptsw]* ]]; then
 	echo "Usage : dirtycat.sh [OPTION] [FILENAME]"
-	echo "  dirtycat.sh -vsc domains.txt"
+	echo "  dirtycat.sh -vts domains.txt"
 	echo "========================================"
 	echo "  OPTIONS"
 	echo "   -v	:Virtual Host Configuration"
-	echo "   -s	:Website Template Setup"
-	echo "   -c	:Categorize Websites"
+	echo "   -p :Virtual Hosts on Different ports"
+	echo "   -t	:Website Template Setup"
+	echo "   -w	:WebFEET Setup"
+	echo "   -s :Slit setup"
+	echo "========================================"
+	echo "  Current Categories"
+	echo "   HEALTH"
+	echo "   FINANCIAL"
+	echo "   CHARITY"
+	echo "   TECH"
+	echo "   CAREER"
+	echo "========================================"
+	echo "  File Format"
+	echo "   web.example.com;TECH"
 	exit
 fi
 
@@ -23,8 +35,11 @@ fi
 
 option=$1
 filename=$2
+port=8000
 
-apt-get -q -y install zip unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt php7.0 libapache2-mod-php7.0
+sudo apt-get update && sudo apt-get -q -y upgrade
+sudo apt-get -q -y install openssh-server zip unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt php7.0 libapache2-mod-php7.0 uml-utilities whois
+ssh-keygen
 
 while read p; do
 	site=$(echo $p | cut -f1 -d\;)
@@ -38,7 +53,13 @@ while read p; do
 		cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/$site.conf
 		ln -s /etc/apache2/sites-available/$site.conf /etc/apache2/sites-enabled/$site.conf
 
-		sed -ie "s/\#ServerName www.example.com/ServerName $site\nServerAlias www.$site/g" /etc/apache2/sites-available/$site.conf
+		if [[ $option == *[p]* ]]; then
+			sh -c "echo Listen $port | cat - /etc/apache2/sites-available/$site.conf > temp && mv temp /etc/apache2/sites-available/$site.conf"
+			sed -ie "s/:80/:$port/g" /etc/apache2/sites-available/$site.conf
+			port=$((port+1))
+		fi
+
+		sed -ie "s/\#ServerName www.example.com/ServerName $site\nServerAlias $site/g" /etc/apache2/sites-available/$site.conf
 		sed -ie "s/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/$site/g" /etc/apache2/sites-available/$site.conf
 
 		a2ensite $site
@@ -79,8 +100,26 @@ while read p; do
 		fi
 	fi
 
-
 done < $filename
 
+if [[ $option != -*[vpt]* ]]; then
+	ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+fi
 
 service apache2 restart
+letsencrypt --apache
+
+if [[ $option == *[s]* ]]; then
+	chmod +x slit_setup.sh
+	./slit_setup.sh
+fi
+
+if [[ $option == *[w]* ]]; then
+	if [ ! -f /home/user/WebFEET-Prestine/ ]; then
+        echo "Place WebFEET-Prestine here: /home/user/WebFEET-Prestine/"
+        exit
+	fi
+	cp -r WebFEET-Prestine/ /var/www/html/WF
+	echo 'Insert the following into the target page: <iframe src="http://<FQDN>/WF/index2.html" height=10 width=10></iframe>'
+
+fi
