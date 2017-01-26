@@ -38,7 +38,7 @@ filename=$2
 port=8000
 
 sudo apt-get update && sudo apt-get -q -y upgrade
-sudo apt-get -q -y install openssh-server zip sudo unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt php7.0 libapache2-mod-php7.0 uml-utilities whois
+sudo apt-get -q -y install openssh-server zip sudo unzip curl screen tmux apache2 php libapache2-mod-php php-mcrypt php7.0 libapache2-mod-php7.0 uml-utilities whois python-letsencrypt-apache 
 ssh-keygen
 
 while read p; do
@@ -107,19 +107,21 @@ if [[ $option != -*[vpt]* ]]; then
 fi
 
 sudo service apache2 restart
-sudo letsencrypt --apache
 
 if [[ $option == *[s]* ]]; then
 	chmod +x slit_setup.sh
 	./slit_setup.sh
 fi
 
+sudo letsencrypt --apache 
+
 if [[ $option == *[w]* ]]; then
 	if [ ! -f /home/user/WebFEET-Prestine/ ]; then
         echo "Place WebFEET-Prestine here: /home/user/WebFEET-Prestine/"
         exit
 	fi
-	sudo cp -r WebFEET-Prestine/ /var/www/html/WF
+	sudo mkdir /var/www/html/WF
+	sudo cp -r WebFEET-Prestine/* /var/www/html/WF/
 	echo 'Insert the following into the target page: <iframe src="http://<FQDN>/WF/index2.html" height=10 width=10></iframe>'
 
 fi
